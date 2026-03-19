@@ -1,0 +1,112 @@
+{
+  "colorScheme": "light",
+  "fonts": [
+    {
+      "family": "Inter",
+      "role": "unknown"
+    }
+  ],
+  "colors": {
+    "primary": "#6A7282",
+    "accent": "#4D49FC",
+    "background": "#FFFFFF",
+    "textPrimary": "#4D49FC",
+    "link": "#4D49FC"
+  },
+  "typography": {
+    "fontFamilies": {
+      "primary": "Inter",
+      "heading": "Inter"
+    },
+    "fontStacks": {
+      "heading": [
+        "ui-sans-serif",
+        "system-ui",
+        "sans-serif",
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        "Noto Color Emoji"
+      ],
+      "body": [
+        "ui-sans-serif",
+        "system-ui",
+        "sans-serif",
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        "Noto Color Emoji"
+      ],
+      "paragraph": [
+        "Inter",
+        "sans-serif"
+      ]
+    },
+    "fontSizes": {
+      "h1": "36px",
+      "h2": "36px",
+      "body": "11px"
+    }
+  },
+  "spacing": {
+    "baseUnit": 8,
+    "borderRadius": "4px"
+  },
+  "components": {
+    "buttonPrimary": {
+      "background": "#FFFFFF",
+      "textColor": "#FFFFFF",
+      "borderRadius": "14px",
+      "borderRadiusCorners": {
+        "topLeft": "14px",
+        "topRight": "14px",
+        "bottomRight": "14px",
+        "bottomLeft": "14px"
+      },
+      "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.1) 0px 4px 6px -4px"
+    }
+  },
+  "images": {
+    "logo": null,
+    "favicon": null,
+    "ogImage": null
+  },
+  "__llm_button_reasoning": {
+    "primary": {
+      "index": 0,
+      "text": "Create New Wallet",
+      "reasoning": "The button 'Create New Wallet' is likely the primary CTA due to its action-oriented text, which suggests initiating a new process. Although both buttons share the same background color, this button's text implies a more significant action compared to 'Import Existing Wallet'."
+    },
+    "secondary": {
+      "index": 1,
+      "text": "Import Existing Wallet",
+      "reasoning": "The button 'Import Existing Wallet' serves as a secondary action, allowing users to continue with an existing setup. It is less prominent in action compared to creating a new wallet."
+    },
+    "confidence": 0.85
+  },
+  "personality": {
+    "tone": "modern",
+    "energy": "medium",
+    "targetAudience": "tech-savvy individuals interested in cryptocurrency or digital finance"
+  },
+  "designSystem": {
+    "framework": "tailwind",
+    "componentLibrary": ""
+  },
+  "confidence": {
+    "buttons": 0.85,
+    "colors": 0.9,
+    "overall": 0.875
+  },
+  "__llm_metadata": {
+    "logoSelection": {
+      "llmCalled": false,
+      "llmSucceeded": false,
+      "finalSource": "none"
+    },
+    "buttonClassification": {
+      "llmCalled": true,
+      "llmSucceeded": true
+    }
+  }
+}

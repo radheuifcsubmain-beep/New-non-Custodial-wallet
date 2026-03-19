@@ -1,29 +1,21 @@
 import React, { useEffect, useRef } from 'react';
 import {
-  View, Text, StyleSheet, Pressable, Animated, Dimensions,
+  View, Text, StyleSheet, Pressable, Animated, Dimensions, Platform,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useWallet } from '../hooks/useWallet';
-import { Colors, Spacing, Radii } from '../constants/theme';
+import { Radii, Spacing } from '../constants/theme';
 import { MaterialIcons } from '@expo/vector-icons';
-import { CHAIN_LOGOS } from '../constants/config';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
-const CHAIN_LIST = [
-  { key: 'ethereum', name: 'Ethereum', symbol: 'ETH', color: '#627EEA', logo: CHAIN_LOGOS.ethereum },
-  { key: 'bsc', name: 'BNB Chain', symbol: 'BNB', color: '#F3BA2F', logo: CHAIN_LOGOS.bsc },
-  { key: 'polygon', name: 'Polygon', symbol: 'POL', color: '#8247E5', logo: CHAIN_LOGOS.polygon },
-  { key: 'solana', name: 'Solana', symbol: 'SOL', color: '#9945FF', logo: CHAIN_LOGOS.solana },
-];
-
-const SECURITY_FEATURES = [
-  { icon: 'lock', label: 'Non-Custodial' },
-  { icon: 'verified-user', label: 'BIP-39 Standard' },
-  { icon: 'security', label: 'Device Encrypted' },
-  { icon: 'fingerprint', label: 'Biometric Auth' },
+const FEATURES = [
+  { icon: 'shield' as const, label: 'Bank-grade security' },
+  { icon: 'vpn-key' as const, label: 'You control your keys' },
+  { icon: 'account-balance-wallet' as const, label: 'Manage multiple assets' },
 ];
 
 export default function OnboardingScreen() {
@@ -32,9 +24,9 @@ export default function OnboardingScreen() {
   const { isLoaded, hasWallet } = useWallet();
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
-  const logoScale = useRef(new Animated.Value(0.85)).current;
-  const glowAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(40)).current;
+  const logoScale = useRef(new Animated.Value(0.7)).current;
+  const cardSlide = useRef(new Animated.Value(80)).current;
 
   useEffect(() => {
     if (isLoaded && hasWallet) {
@@ -43,412 +35,220 @@ export default function OnboardingScreen() {
   }, [isLoaded, hasWallet]);
 
   useEffect(() => {
-    Animated.sequence([
-      Animated.parallel([
-        Animated.spring(logoScale, { toValue: 1, friction: 6, tension: 80, useNativeDriver: true }),
-        Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
-        Animated.timing(slideAnim, { toValue: 0, duration: 600, useNativeDriver: true }),
-      ]),
+    Animated.parallel([
+      Animated.spring(logoScale, { toValue: 1, friction: 5, tension: 60, useNativeDriver: true }),
+      Animated.timing(fadeAnim, { toValue: 1, duration: 700, useNativeDriver: true }),
+      Animated.timing(slideAnim, { toValue: 0, duration: 700, useNativeDriver: true }),
+      Animated.spring(cardSlide, { toValue: 0, friction: 8, tension: 50, delay: 300, useNativeDriver: true }),
     ]).start();
-
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(glowAnim, { toValue: 1, duration: 2000, useNativeDriver: false }),
-        Animated.timing(glowAnim, { toValue: 0, duration: 2000, useNativeDriver: false }),
-      ])
-    ).start();
   }, []);
-
-  const glowOpacity = glowAnim.interpolate({ inputRange: [0, 1], outputRange: [0.4, 0.8] });
 
   if (!isLoaded) return null;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Background grid pattern */}
-      <View style={styles.gridBg} pointerEvents="none">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <View key={i} style={[styles.gridLine, { top: i * 90 }]} />
-        ))}
-        {Array.from({ length: 6 }).map((_, i) => (
-          <View key={i} style={[styles.gridLineV, { left: i * (width / 5) }]} />
-        ))}
-      </View>
+    <View style={styles.root}>
+      <LinearGradient
+        colors={['#7C3AED', '#4D49FC', '#0EA5E9', '#06B6D4']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFillObject}
+      />
 
-      {/* Top accent bar */}
-      <View style={styles.topBar}>
-        <View style={styles.topBarDot} />
-        <Text style={styles.topBarText}>XU WALLET · ENTERPRISE GRADE</Text>
-        <View style={styles.topBarDot} />
-      </View>
+      {/* Soft overlay blobs */}
+      <View style={[styles.blob, { top: -60, left: -60, backgroundColor: 'rgba(124,58,237,0.35)' }]} />
+      <View style={[styles.blob, { bottom: 120, right: -80, backgroundColor: 'rgba(6,182,212,0.25)', width: 280, height: 280 }]} />
 
-      {/* Hero section */}
-      <View style={styles.heroSection}>
-        {/* Glow ring behind logo */}
-        <Animated.View style={[styles.glowRing, { opacity: glowOpacity }]} />
-
-        <Animated.View style={[styles.logoWrap, { transform: [{ scale: logoScale }] }]}>
-          <Image
-            source={require('../assets/images/logo.png')}
-            style={styles.logoImage}
-            contentFit="contain"
-            transition={300}
-          />
+      {/* Main content */}
+      <View style={[styles.content, { paddingTop: insets.top + (Platform.OS === 'web' ? 60 : 20) }]}>
+        {/* Logo */}
+        <Animated.View style={[styles.logoWrap, { transform: [{ scale: logoScale }], opacity: fadeAnim }]}>
+          <View style={styles.logoCircle}>
+            <Image
+              source={require('../assets/images/logo.png')}
+              style={styles.logoImage}
+              contentFit="contain"
+            />
+          </View>
         </Animated.View>
 
-        <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
-          <View style={styles.brandRow}>
-            <Text style={styles.brandName}>XU</Text>
-            <Text style={styles.brandNameLight}> WALLET</Text>
-          </View>
-          <Text style={styles.brandTagline}>MULTI-CHAIN · NON-CUSTODIAL · ENTERPRISE</Text>
+        {/* Title */}
+        <Animated.View style={[styles.titleBlock, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
+          <Text style={styles.title}>XU Wallet</Text>
+          <Text style={styles.subtitle}>Secure. Decentralized. Non-Custodial.</Text>
+        </Animated.View>
+
+        {/* Features */}
+        <Animated.View style={[styles.features, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
+          {FEATURES.map((f) => (
+            <View key={f.label} style={styles.featureRow}>
+              <View style={styles.featureIcon}>
+                <MaterialIcons name={f.icon} size={18} color="rgba(255,255,255,0.9)" />
+              </View>
+              <Text style={styles.featureText}>{f.label}</Text>
+            </View>
+          ))}
         </Animated.View>
       </View>
 
-      {/* Chain logos strip */}
-      <Animated.View style={[styles.chainStrip, { opacity: fadeAnim }]}>
-        {CHAIN_LIST.map((chain) => (
-          <View key={chain.key} style={styles.chainItem}>
-            <View style={[styles.chainLogoWrap, { borderColor: chain.color + '60', backgroundColor: chain.color + '15' }]}>
-              <Image source={{ uri: chain.logo }} style={styles.chainLogo} contentFit="contain" />
-            </View>
-            <Text style={styles.chainSymbol}>{chain.symbol}</Text>
-          </View>
-        ))}
-      </Animated.View>
-
-      {/* Divider */}
-      <View style={styles.dividerLine}>
-        <View style={styles.dividerSegment} />
-        <Text style={styles.dividerText}>SECURE YOUR ASSETS</Text>
-        <View style={styles.dividerSegment} />
-      </View>
-
-      {/* Security features grid */}
-      <Animated.View style={[styles.securityGrid, { opacity: fadeAnim }]}>
-        {SECURITY_FEATURES.map((feat) => (
-          <View key={feat.label} style={styles.securityItem}>
-            <View style={styles.securityIcon}>
-              <MaterialIcons name={feat.icon as any} size={16} color={Colors.primary} />
-            </View>
-            <Text style={styles.securityLabel}>{feat.label}</Text>
-          </View>
-        ))}
-      </Animated.View>
-
-      {/* CTA buttons */}
-      <Animated.View style={[styles.actions, { opacity: fadeAnim, paddingBottom: insets.bottom + 16 }]}>
-        {/* Primary — Create Wallet */}
+      {/* Bottom action card */}
+      <Animated.View style={[styles.card, { transform: [{ translateY: cardSlide }], paddingBottom: insets.bottom + (Platform.OS === 'web' ? 34 : 16) }]}>
         <Pressable
           onPress={() => router.push('/create')}
           style={({ pressed }) => [styles.primaryBtn, pressed && styles.btnPressed]}
         >
-          <View style={styles.primaryBtnInner}>
-            <View style={styles.primaryBtnLeft}>
-              <MaterialIcons name="add-circle" size={22} color={Colors.textInverse} />
-              <View>
-                <Text style={styles.primaryBtnTitle}>Create New Wallet</Text>
-                <Text style={styles.primaryBtnSub}>Generate a fresh BIP-39 seed phrase</Text>
-              </View>
-            </View>
-            <MaterialIcons name="chevron-right" size={20} color={Colors.textInverse + 'aa'} />
-          </View>
+          <MaterialIcons name="add-circle-outline" size={20} color="#fff" />
+          <Text style={styles.primaryBtnText}>Create New Wallet</Text>
         </Pressable>
 
-        {/* Secondary — Import Wallet */}
         <Pressable
           onPress={() => router.push('/import')}
           style={({ pressed }) => [styles.secondaryBtn, pressed && styles.btnPressed]}
         >
-          <View style={styles.primaryBtnInner}>
-            <View style={styles.primaryBtnLeft}>
-              <MaterialIcons name="file-download" size={22} color={Colors.primary} />
-              <View>
-                <Text style={styles.secondaryBtnTitle}>Import with Seed Phrase</Text>
-                <Text style={styles.secondaryBtnSub}>Restore an existing wallet (12/24 words)</Text>
-              </View>
-            </View>
-            <MaterialIcons name="chevron-right" size={20} color={Colors.primary + 'aa'} />
-          </View>
+          <MaterialIcons name="file-download" size={20} color="#333" />
+          <Text style={styles.secondaryBtnText}>Import Existing Wallet</Text>
         </Pressable>
 
-        {/* Disclaimer row */}
-        <View style={styles.disclaimer}>
-          <MaterialIcons name="lock" size={12} color={Colors.textMuted} />
-          <Text style={styles.disclaimerText}>
-            Private keys are stored securely on this device only · Open Source · Auditable
-          </Text>
-        </View>
+        <Text style={styles.disclaimer}>
+          Your keys, your crypto. We never store your private keys.
+        </Text>
       </Animated.View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
-
-  gridBg: {
+  blob: {
     position: 'absolute',
-    top: 0, left: 0, right: 0, bottom: 0,
-    overflow: 'hidden',
+    width: 240,
+    height: 240,
+    borderRadius: 120,
+    opacity: 0.6,
   },
-  gridLine: {
-    position: 'absolute',
-    left: 0, right: 0,
-    height: 1,
-    backgroundColor: Colors.primary + '08',
-  },
-  gridLineV: {
-    position: 'absolute',
-    top: 0, bottom: 0,
-    width: 1,
-    backgroundColor: Colors.primary + '08',
-  },
-
-  topBar: {
-    flexDirection: 'row',
+  content: {
+    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.surfaceBorder,
-    backgroundColor: Colors.surface,
-  },
-  topBarDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: Colors.primary,
-  },
-  topBarText: {
-    fontSize: 10,
-    color: Colors.primary,
-    fontWeight: '700',
-    letterSpacing: 2,
-  },
-
-  heroSection: {
-    alignItems: 'center',
-    paddingTop: Spacing.xl,
-    paddingBottom: Spacing.lg,
-    gap: Spacing.md,
-  },
-  glowRing: {
-    position: 'absolute',
-    top: Spacing.xl - 20,
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    backgroundColor: Colors.primary,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
-    shadowRadius: 40,
-    elevation: 30,
-    opacity: 0.5,
+    paddingHorizontal: Spacing.lg,
+    gap: Spacing.xl,
   },
   logoWrap: {
-    width: 120,
-    height: 120,
-    borderRadius: 30,
-    backgroundColor: Colors.surface,
+    marginTop: Spacing.lg,
+  },
+  logoCircle: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.35)',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: Colors.primary + '55',
     overflow: 'hidden',
   },
   logoImage: {
-    width: 100,
-    height: 100,
+    width: 82,
+    height: 82,
   },
-  brandRow: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    justifyContent: 'center',
-  },
-  brandName: {
-    fontSize: 42,
-    fontWeight: '800',
-    color: Colors.primary,
-    letterSpacing: -1,
-  },
-  brandNameLight: {
-    fontSize: 42,
-    fontWeight: '300',
-    color: Colors.textPrimary,
-    letterSpacing: 2,
-  },
-  brandTagline: {
-    fontSize: 10,
-    color: Colors.textMuted,
-    letterSpacing: 2,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginTop: 4,
-  },
-
-  chainStrip: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: Spacing.lg,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.md,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: Colors.surfaceBorder,
-    backgroundColor: Colors.surface,
-  },
-  chainItem: {
-    alignItems: 'center',
-    gap: 5,
-  },
-  chainLogoWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  chainLogo: {
-    width: 30,
-    height: 30,
-  },
-  chainSymbol: {
-    fontSize: 10,
-    color: Colors.textSecondary,
-    fontWeight: '600',
-  },
-
-  dividerLine: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-  },
-  dividerSegment: {
-    flex: 1,
-    height: 1,
-    backgroundColor: Colors.surfaceBorder,
-  },
-  dividerText: {
-    fontSize: 10,
-    color: Colors.textMuted,
-    fontWeight: '700',
-    letterSpacing: 1.5,
-  },
-
-  securityGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: Spacing.md,
-    gap: Spacing.sm,
-    marginBottom: Spacing.sm,
-  },
-  securityItem: {
-    flex: 1,
-    minWidth: '45%',
-    flexDirection: 'row',
+  titleBlock: {
     alignItems: 'center',
     gap: 8,
-    backgroundColor: Colors.surfaceElevated,
-    borderRadius: Radii.md,
-    borderWidth: 1,
-    borderColor: Colors.surfaceBorder,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
   },
-  securityIcon: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: Colors.primaryDim,
+  title: {
+    fontSize: 34,
+    fontWeight: '700',
+    color: '#fff',
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.78)',
+    textAlign: 'center',
+    letterSpacing: 0.2,
+  },
+  features: {
+    width: '100%',
+    gap: 14,
+    paddingHorizontal: Spacing.sm,
+  },
+  featureRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  featureIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: 'rgba(255,255,255,0.18)',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.25)',
   },
-  securityLabel: {
-    fontSize: 12,
-    color: Colors.textSecondary,
+  featureText: {
+    fontSize: 16,
+    color: 'rgba(255,255,255,0.92)',
     fontWeight: '500',
   },
 
-  actions: {
-    paddingHorizontal: Spacing.md,
-    paddingTop: Spacing.sm,
+  card: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    paddingTop: Spacing.lg,
+    paddingHorizontal: Spacing.lg,
     gap: Spacing.sm,
-    marginTop: 'auto',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 20,
   },
-
   primaryBtn: {
-    backgroundColor: Colors.primary,
+    height: 54,
+    backgroundColor: '#4D49FC',
     borderRadius: Radii.md,
-    overflow: 'hidden',
-  },
-  primaryBtnInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 14,
-  },
-  primaryBtnLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    flex: 1,
-  },
-  primaryBtnTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: Colors.textInverse,
-  },
-  primaryBtnSub: {
-    fontSize: 11,
-    color: Colors.textInverse + 'bb',
-    marginTop: 2,
-  },
-
-  secondaryBtn: {
-    backgroundColor: Colors.surfaceElevated,
-    borderRadius: Radii.md,
-    borderWidth: 1,
-    borderColor: Colors.primary + '55',
-    overflow: 'hidden',
-  },
-  secondaryBtnTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: Colors.primary,
-  },
-  secondaryBtnSub: {
-    fontSize: 11,
-    color: Colors.textMuted,
-    marginTop: 2,
-  },
-
-  btnPressed: {
-    opacity: 0.82,
-    transform: [{ scale: 0.98 }],
-  },
-
-  disclaimer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 5,
-    paddingTop: 4,
+    gap: 10,
+    shadowColor: '#4D49FC',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    elevation: 8,
   },
-  disclaimerText: {
-    fontSize: 10,
-    color: Colors.textMuted,
+  primaryBtnText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  secondaryBtn: {
+    height: 54,
+    backgroundColor: '#fff',
+    borderRadius: Radii.md,
+    borderWidth: 1.5,
+    borderColor: '#E5E7EB',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  secondaryBtnText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1F2937',
+  },
+  btnPressed: {
+    opacity: 0.82,
+    transform: [{ scale: 0.97 }],
+  },
+  disclaimer: {
+    fontSize: 12,
+    color: '#9CA3AF',
     textAlign: 'center',
-    flex: 1,
+    paddingVertical: 4,
   },
 });

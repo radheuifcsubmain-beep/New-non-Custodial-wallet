@@ -1,33 +1,37 @@
-// XU Wallet — Black & Dark Gold Theme
 export const Colors = {
-  // Base — Pure black foundation
-  background: '#000000',
-  surface: '#0D0D0D',
-  surfaceElevated: '#161200',
-  surfaceBorder: '#2C2500',
-  cardGlass: 'rgba(13, 13, 0, 0.92)',
+  // Gradient palette (Figma brand)
+  gradientStart: '#7C3AED',
+  gradientMid: '#4D49FC',
+  gradientEnd: '#06B6D4',
 
-  // Brand — Dark golden yellow
-  primary: '#E8B800',
-  primaryDim: 'rgba(232, 184, 0, 0.15)',
-  secondary: '#C98F00',
-  secondaryDim: 'rgba(201, 143, 0, 0.15)',
-  accent: '#FFD84D',
-  accentDim: 'rgba(255, 216, 77, 0.15)',
+  // Base surfaces — deep navy/indigo dark
+  background: '#0B0B1E',
+  surface: '#13132B',
+  surfaceElevated: '#1C1C3A',
+  surfaceBorder: '#2A2A50',
+  cardGlass: 'rgba(28, 28, 58, 0.92)',
+
+  // Brand
+  primary: '#4D49FC',
+  primaryDim: 'rgba(77, 73, 252, 0.18)',
+  secondary: '#7C3AED',
+  secondaryDim: 'rgba(124, 58, 237, 0.18)',
+  accent: '#06B6D4',
+  accentDim: 'rgba(6, 182, 212, 0.15)',
 
   // Semantic
   success: '#22C55E',
   error: '#EF4444',
   warning: '#F59E0B',
-  info: '#E8B800',
+  info: '#4D49FC',
 
   // Text
   textPrimary: '#FFFFFF',
-  textSecondary: '#A89060',
-  textMuted: '#5C4E28',
-  textInverse: '#000000',
+  textSecondary: '#A0A8C0',
+  textMuted: '#5A6080',
+  textInverse: '#FFFFFF',
 
-  // Networks — kept recognizable
+  // Network tokens
   ethereum: '#627EEA',
   bsc: '#F3BA2F',
   polygon: '#8247E5',
@@ -45,9 +49,9 @@ export const Spacing = {
 
 export const Radii = {
   sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 24,
+  md: 14,
+  lg: 20,
+  xl: 28,
   full: 999,
 };
 
