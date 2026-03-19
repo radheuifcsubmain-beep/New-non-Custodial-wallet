@@ -1,4 +1,4 @@
-# OnSpace Wallet (XU Wallet)
+# XU Wallet
 
 ## Overview
 
